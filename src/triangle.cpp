@@ -66,7 +66,7 @@ void triangle::draw(GraphicsContext* GC){
  */
 void triangle::draw(GraphicsContext* GC, viewcontext* vc){
 	//convert to display mode
-	matrix drawCoor = vc->convertToWindow(coor);
+	matrix drawCoor = vc->convert(coor);
 	int color = (((this->RED << 8) + this->GREEN) << 8) + this->BLUE;
 	GC->setColor(color);
 	GC->drawLine(drawCoor[0][0],  drawCoor[1][0],  drawCoor[0][1], drawCoor[1][1]);

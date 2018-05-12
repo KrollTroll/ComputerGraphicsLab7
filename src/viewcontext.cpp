@@ -7,27 +7,47 @@
 #include "viewcontext.h"
 #include <math.h>
 
+using namespace std;
+
 /**
  * General Constructor
  */
-viewcontext::viewcontext():transFWD(4,4), transBWD(4,4), homo(4,4), invHomo(4,4){
+viewcontext::viewcontext():dTp(4,4), pTv(4,4), vTm(4,4), homo(4,4){
 	//initalize necessary matrices to be identities
 	for(int i = 0; i < 4; i++){
-		transFWD[i][i] = 1;
-		transBWD[i][i] = 1;
+		dTp[i][i] = 1;
+		pTv[i][i] = 1;
+		vTm[i][i] = 1;
 		homo[i][i] = 1;
-		invHomo[i][i] = 1;
 	}
 
 	//set x transformations
-	transFWD[0][3] =  -400;
-	transBWD[0][3] = 400;
+	dTp[0][3] = 400;
 	//set y transformations
-	transFWD[1][3] = 300;
-	transBWD[1][3] = 300;
+	dTp[1][3] = 300;
 	//flip y
-	transFWD[1][1] = -1;
-	transBWD[1][1] = -1;
+	dTp[1][1] = -1;
+
+	cout << dTp << endl;
+
+	//pTv[2][2] = 0;
+	//pTv[3][2] = -1.0/6.0;
+
+	cout << pTv << endl;
+
+
+	vTm[0][0] = 2/sqrt(5);
+	vTm[0][2] = -1/sqrt(5);
+	vTm[1][0] = -2/(3*sqrt(5));
+	vTm[1][1] = 5/(3*sqrt(5));
+	vTm[1][2] = -4/(3*sqrt(5));
+	vTm[2][0] = 1.0/3.0;
+	vTm[2][1] = 2.0/3.0;
+	vTm[2][2] = 2.0/3.0;
+	vTm[2][3] = -6.0;
+
+	cout << vTm << endl;
+
 }
 
 /**
@@ -42,7 +62,6 @@ viewcontext::~viewcontext(){}
 void viewcontext::changeX(char sign){
 	//need two dummy matrices for inverse and forward operations
 	matrix dummy = matrix::identity(4);
-	matrix dummyInv = matrix::identity(4);
 	int xlate = 0;
 	//assign xlate
 	if(sign == '-'){
@@ -53,11 +72,8 @@ void viewcontext::changeX(char sign){
 	}
 	//set necessary matrix values
 	dummy[0][3] = xlate;
-	dummyInv[0][3] = -xlate;
 	//operate on homogenous and inver homogenous matrices
 	homo = dummy * homo;
-	invHomo = invHomo * dummyInv;
-
 }
 
 /**
@@ -67,7 +83,6 @@ void viewcontext::changeX(char sign){
 void viewcontext::changeY(char sign){
 	//need two dummy matrices for inverse and forward operations
 	matrix dummy = matrix::identity(4);
-	matrix dummyInv = matrix::identity(4);
 	int ylate = 0;
 	//assign increment/decrement based on sign
 	if(sign == '-'){
@@ -78,10 +93,8 @@ void viewcontext::changeY(char sign){
 	}
 	//assign necessary values in dummy matrices
 	dummy[1][3] = ylate;
-	dummyInv[1][3] = -ylate;
 	//operate on homogenous and inverse homogenous matrices
 	homo = dummy * homo;
-	invHomo = invHomo * dummyInv;
 }
 
 /**
@@ -90,7 +103,6 @@ void viewcontext::changeY(char sign){
  */
 void viewcontext::changeDeg(char sign){
 	matrix dummy = matrix::identity(4);
-	matrix dummyInv = matrix::identity(4);
 	float deg = 0.0;
 	if(sign == '-'){
 		deg = -10.0 * M_PI/180.0;
@@ -103,15 +115,9 @@ void viewcontext::changeDeg(char sign){
 	dummy[0][1] = -sin(deg);
 	dummy[1][0] =  sin(deg);
 	dummy[1][1] =  cos(deg);
-	//assign opposite rotation values to inverse homogenous matrix
-	dummyInv[0][0] =  cos(-deg);
-	dummyInv[0][1] = -sin(-deg);
-	dummyInv[1][0] =  sin(-deg);
-	dummyInv[1][1] =  cos(-deg);
 
 	//do forward  and invers operations on homogenous and inverse matrices
 	homo = dummy * homo;
-	invHomo = invHomo * dummyInv;
 }
 
 /**
@@ -120,7 +126,6 @@ void viewcontext::changeDeg(char sign){
  */
 void viewcontext::scale(char sign){
 	matrix dummy = matrix::identity(4);
-	matrix dummyInv = matrix::identity(4);
 	//default scale factor is 1 just in case
 	double scaleFact = 1;
 	//assign scale factor according to input
@@ -130,15 +135,12 @@ void viewcontext::scale(char sign){
 	else{
 		scaleFact = 2;
 	}
-	for(int i = 0; i < 2; i++){
+	for(int i = 0; i < 3; i++){
 		//asign forward scale factor
 		dummy[i][i] = scaleFact;
-		//assign inverse scale factor
-		dummyInv[i][i] = 1/scaleFact;
 	}
 	//perform forward and inverse operations on homogenous matrices
 	homo = dummy * homo;
-	invHomo = invHomo * dummyInv;
 }
 
 /**
@@ -146,17 +148,10 @@ void viewcontext::scale(char sign){
  * @param oldMat : matrix in display mode
  * @return 		 : new matrix in model mode
  */
-matrix viewcontext::convertToWindow(const matrix oldMat){
-	return transBWD*homo*oldMat;
-}
+matrix viewcontext::convert(const matrix oldMat){
 
-/**
- * converts the matrix from model mode to display mode
- * @param oldMat : matrix in model mode
- * @return		 : new matrix in display mode
- */
-matrix viewcontext::convertToImage(const matrix oldMat){
-	return invHomo*transFWD*oldMat;
+	return dTp*pTv*vTm*homo*oldMat;
+
 }
 
 /**
@@ -164,5 +159,4 @@ matrix viewcontext::convertToImage(const matrix oldMat){
  */
 void viewcontext::undo(){
 	homo = matrix::identity(4);
-	invHomo = matrix::identity(4);
 }

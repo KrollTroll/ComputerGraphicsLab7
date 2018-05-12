@@ -49,18 +49,11 @@ void changeDeg(char sign);
 void scale(char sign);
 
 /**
- * converts the matrix from display mode to model mode
- * @param oldMat : matrix in display mode
- * @return 		 : new matrix in model mode
- */
-matrix convertToImage(const matrix oldMat);
-
-/**
  * converts the matrix from model mode to display mode
  * @param oldMat : matrix in model mode
  * @return		 : new matrix in display mode
  */
-matrix convertToWindow(const matrix oldMat);
+matrix convert(const matrix oldMat);
 
 /**
  * revert displayed image to non-transformed state
@@ -69,13 +62,11 @@ void undo();
 
 private:
 //trans image to window
-matrix transFWD;
-//trans window to image
-matrix transBWD;
+matrix dTp;
+matrix pTv;
+matrix vTm;
 //homogenous matrix
 matrix homo;
-//inverse homogenous matrix
-matrix invHomo;
 
 };
 #endif
