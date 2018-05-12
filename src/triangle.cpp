@@ -14,73 +14,18 @@
 
 using namespace std;
 
-/**
- * basic triangle constructor
- * @param x  : origin x coordinate
- * @param y  : origin y coordinate
- * @param R  : RED value
- * @param G  : GREEN value
- * @param B  : BLUE value
- * @param x2 : second point x coordinate
- * @param y2 : second point y coordinate
- * @param x3 : third point x coordinate
- * @param y3 : third point y coordinate
- */
-triangle::triangle(float x, float y, int R, int G, int B, float x2, float y2, float x3, float y3)
-																				:shape(x,y,R,G,B){
-	this->x2 = x2;
-	this->y2 = y2;
-	this->x3 = x3;
-	this->y3 = y3;
-	coor[0][1] = x2;
-	coor[1][1] = y2;
-	coor[0][2] = x3;
-	coor[1][2] = y3;
+triangle::triangle(float x, float y, float z, int R, int G, int B, float x2, float y2, float z2, float x3, float y3, float z3)
+					:shape(x,y,R,G,B){
+	coor[2][0] = this->z = z;
+	coor[0][1] = this->x2 = x2;
+	coor[1][1] = this->y2 = y2;
+	coor[1][2] = this->z2 = z2;
+	coor[0][2] = this->x3 = x3;
+	coor[1][2] = this->y3 = y3;
+	coor[2][2] = this->z3 = z3;
 	for(int i = 0; i < 4; i++){
-		coor[2][i] = 1;
 		coor[3][i] = 1;
 	}
-}
-
-/**
- * basic triangle constructor with added viewcontext for conversions
- * @param x  : origin x coordinate
- * @param y  : origin y coordinate
- * @param R  : RED value
- * @param G  : GREEN value
- * @param B  : BLUE value
- * @param x2 : second point x coordinate
- * @param y2 : second point y coordinate
- * @param x3 : third point x coordinate
- * @param y3 : third point y coordinate
- * @param vc : viewcontext for image/display conversions
- */
-triangle::triangle(float x, float y, int R, int G, int B, float x2, float y2, float x3, float y3, viewcontext* vc)
-																								:shape(x,y,R,G,B){
-	//create display matrix
-	this->x2 = x2;
-	this->y2 = y2;
-	this->x3 = x3;
-	this->y3 = y3;
-	coor[0][1] = this->x2;
-	coor[1][1] = this->y2;
-	coor[0][2] = this->x3;
-	coor[1][2] = this->y3;
-	for(int i = 0; i < 4; i++){
-		coor[2][i] = 1;
-		coor[3][i] = 1;
-	}
-
-	//convert display matrix to image matrix
-	matrix newCoor = vc->convertToImage(coor);
-	coor = newCoor;
-	//reassign values
-	shape::x = coor[0][0];
-	shape::y = coor[1][0];
-	this->x2 = coor[0][1];
-	this->y2 = coor[1][1];
-	this->x3 = coor[0][2];
-	this->y3 = coor[1][2];
 }
 
 /**
@@ -88,14 +33,13 @@ triangle::triangle(float x, float y, int R, int G, int B, float x2, float y2, fl
  * @param from : triangle to copy data from
  */
 triangle::triangle(const triangle& from):shape(from){
-	this->x2 = from.x2;
-	this->y2 = from.x2;
-	this->x3 = from.x3;
-	this->y3 = from.x3;
-	coor[0][1] = x2;
-	coor[1][1] = y2;
-	coor[0][2] = x3;
-	coor[1][2] = y3;
+	coor[2][0] = this->z  = from.z;
+	coor[0][1] = this->x2 = from.x2;
+	coor[1][1] = this->y2 = from.x2;
+	coor[2][1] = this->z2 = from.z2;
+	coor[0][2] = this->x3 = from.x3;
+	coor[1][2] = this->y3 = from.x3;
+	coor[2][3] = this->z3 = from.z3;
 }
 
 /**
@@ -149,7 +93,7 @@ triangle& triangle::operator=(const triangle& from){
  * @return : address of newly allocated triangle
  */
 triangle& triangle::clone(){
-	return *(new triangle(x, y, RED, GREEN, BLUE, x2, y2, x3, y3));
+	return *(new triangle(x, y, z, RED, GREEN, BLUE, x2, y2, z2, x3, y3, z3));
 }
 
 /**
@@ -161,13 +105,7 @@ std::ostream& triangle::out(std::ostream& os) const{
 
 	//std::cout << coor << std::endl;
 
-	os << "START TRIANGLE" << "\n";
-	shape::out(os);
-	os << "  " << coor[0][1] << "\n";
-	os << "  " << coor[1][1] << "\n";
-	os << "  " << coor[0][2] << "\n";
-	os << "  " << coor[1][2] << "\n";
-	os << "END" << endl << endl;
+	os << this->coor << std::endl;
 	return os;
 }
 

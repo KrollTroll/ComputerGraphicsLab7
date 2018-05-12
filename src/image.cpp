@@ -16,8 +16,6 @@
 
 #include "image.h"
 #include "shape.h"
-#include "point.h"
-#include "line.h"
 #include "triangle.h"
 
 using namespace std;
@@ -53,6 +51,8 @@ image::~image(){
 	//clear the matrix
 	shapes.clear();
 };
+
+void import(string fileName){}
 
 /**
  * assignment operator
@@ -118,41 +118,6 @@ std::ostream& image::out(std::ostream& os) const{
 		shapes[i]->out(os);
 	}
 	return os;
-}
-
-/**
- * reads in shapes from a text file
- * @param in : input stream to read from
- */
-void image::in(std::ifstream& in){
-		//Print error if file does not open for whatever reason
-		if(!in){
-			cerr << "\n**Unable to open file " << endl;
-			cout << "**\n**File may be missing, incorrect format, or corrupted**\n\n";
-		}
-		//If the file is valid
-		else{
-			string holder;
-			//as long as there is more in the file
-			while(getline(in, holder)){
-				//if entering a shape
-				if(!holder.compare("START TRIANGLE")){
-					triangle dummyT(0,0,0,0,0,0,0,0,0);
-					dummyT.in(in);
-					this->add(&dummyT);
-				}
-				if(!holder.compare("START LINE")){
-					line dummyL(0,0,0,0,0,0,0);
-					dummyL.in(in);
-					this->add(&dummyL);
-				}
-				if(!holder.compare("START POINT")){
-					point dummyP(0,0,0,0,0);
-					dummyP.in(in);
-					this->add(&dummyP);
-				}
-			}
-		}
 }
 
 /**

@@ -11,6 +11,8 @@
 #include "shape.h"
 #include <vector>
 
+using namespace std;
+
 class image{
 public:
 
@@ -29,6 +31,8 @@ public:
 	 * destructor
 	 */
 	~image();
+
+	void import(string fileName);
 
 	/**
 	 * assignment operator

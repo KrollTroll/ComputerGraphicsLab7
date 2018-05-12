@@ -13,20 +13,6 @@ class triangle : public shape{
 public:
 
 	/**
-	 * basic triangle constructor
-	 * @param x  : origin x coordinate
-	 * @param y  : origin y coordinate
-	 * @param R  : RED value
-	 * @param G  : GREEN value
-	 * @param B  : BLUE value
-	 * @param x2 : second point x coordinate
-	 * @param y2 : second point y coordinate
-	 * @param x3 : third point x coordinate
-	 * @param y3 : third point y coordinate
-	 */
-	triangle(float x, float y, int R, int G, int B, float x2, float y2, float x3, float y3);
-
-	/**
 	 * basic triangle constructor with added viewcontext for conversions
 	 * @param x  : origin x coordinate
 	 * @param y  : origin y coordinate
@@ -39,7 +25,7 @@ public:
 	 * @param y3 : third point y coordinate
 	 * @param vc : viewcontext for image/display conversions
 	 */
-	triangle(float x, float y, int R, int G, int B, float x2, float y2, float x3, float y3, viewcontext* vc);
+	triangle(float x, float y, float z, int R, int G, int B, float x2, float y2, float z2, float x3, float y3, float z3);
 
 	/**
 	 * copy constructor
@@ -92,10 +78,13 @@ public:
 	void in(std::istream& in);
 
 protected:
+	float z;
 	float x2;
 	float y2;
+	float z2;
 	float x3;
 	float y3;
+	float z3;
 };
 
 /**
