@@ -40,7 +40,11 @@ void changeY(char sign);
  * increment or decrement angle of rotation based on input
  * @param sign : decrement if -, increment if +
  */
-void changeDeg(char sign);
+void changeDegY(char sign);
+
+void changeDegHor(char sign);
+
+void changeFocus(char sign);
 
 /**
  * scale up or down based on input
@@ -67,6 +71,10 @@ matrix pTv;
 matrix vTm;
 //homogenous matrix
 matrix homo;
+matrix threeDHomo;
+float beta;
+float theta;
+float Zf;
 
 };
 #endif

@@ -22,7 +22,7 @@ drawing::drawing()
 	tState = 'x';
 
 	parseFile("word.stl", picture);
-
+	
 	return;
 }
 
@@ -60,16 +60,22 @@ void drawing::keyDown(GraphicsContext* gc, unsigned int keycode){
 		picture.draw(gc, vc);
 	}
 	//transformation select
-	// b is translate
-	else if(keycode == 98){
+	// t is translate
+	else if(keycode == 116){
 		tState = 't';
 	}
-	// n is rotate
-	else if(keycode == 110){
-		tState = 'r';
+	// z is vertical orbit
+	else if(keycode == 122){
+		tState = 'z';
 	}
-	// m is scale
-	else if(keycode == 109){
+
+	// y is horiz orbit
+	else if(keycode == 121){
+		tState = 'y';
+	}
+
+	// s is scale
+	else if(keycode == 115){
 		tState = 's';
 	}
 
@@ -100,17 +106,32 @@ void drawing::keyDown(GraphicsContext* gc, unsigned int keycode){
 				picture.draw(gc, vc);
 			}
 		}
-		//rotation state
-		else if(tState == 'r'){
+		//horizontal orbig state
+		else if(tState == 'y'){
 			//< pressed
 			if(keycode == 44){
-				vc->changeDeg('+');
+				vc->changeDegY('+');
 				gc->clear();
 				picture.draw(gc, vc);
 			}
 			//> pressed
 			else if(keycode == 46){
-				vc->changeDeg('-');
+				vc->changeDegY('-');
+				gc->clear();
+				picture.draw(gc, vc);
+			}
+		}
+		//rotation z state
+		else if(tState == 'z'){
+			//< pressed
+			if(keycode == 44){
+				vc->changeDegHor('+');
+				gc->clear();
+				picture.draw(gc, vc);
+			}
+			//> pressed
+			else if(keycode == 46){
+				vc->changeDegHor('-');
 				gc->clear();
 				picture.draw(gc, vc);
 			}
@@ -227,6 +248,15 @@ void drawing::parseFile(string inFile, image& picture){
 		//close file to save memory
 		myFile.close();
 	}
+}
+
+void drawing::drawAxes(){
+	triangle t1(255, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0);
+	triangle t2(0, 255, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0);
+	triangle t3(0, 0, 255, 0, 0, 255, 0, 0, 0, 0, 0, 0);
+	picture.add(&t1);
+	picture.add(&t2);
+	picture.add(&t3);
 }
 
 

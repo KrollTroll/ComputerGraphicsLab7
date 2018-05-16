@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-c -Wall
 LDFLAGS= -lX11
-SOURCES=draw.cpp line.cpp image.cpp point.cpp shape.cpp matrix.cpp drawing.cpp gcontext.cpp triangle.cpp x11context.cpp viewcontext.cpp
+SOURCES=draw.cpp image.cpp shape.cpp matrix.cpp drawing.cpp gcontext.cpp triangle.cpp x11context.cpp viewcontext.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=TransformImage
 

@@ -54,6 +54,8 @@ private:
 // In an actual implementation, we would also have one of our "image"
 // objects here to store all of our drawn shapes.
 
+void drawAxes();
+
 //State switch variables
 bool dragging; // flag to know if we are dragging
 bool dot;      // flag to know if in point mode

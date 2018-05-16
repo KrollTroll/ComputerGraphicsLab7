@@ -12,13 +12,14 @@ using namespace std;
 /**
  * General Constructor
  */
-viewcontext::viewcontext():dTp(4,4), pTv(4,4), vTm(4,4), homo(4,4){
+viewcontext::viewcontext():dTp(4,4), pTv(4,4), vTm(4,4), homo(4,4), threeDHomo(4,4){
 	//initalize necessary matrices to be identities
 	for(int i = 0; i < 4; i++){
 		dTp[i][i] = 1;
 		pTv[i][i] = 1;
 		vTm[i][i] = 1;
 		homo[i][i] = 1;
+		threeDHomo[i][i] = 1;
 	}
 
 	//set x transformations
@@ -28,12 +29,14 @@ viewcontext::viewcontext():dTp(4,4), pTv(4,4), vTm(4,4), homo(4,4){
 	//flip y
 	dTp[1][1] = -1;
 
-	cout << dTp << endl;
+	//cout << dTp << endl;
 
-	//pTv[2][2] = 0;
-	//pTv[3][2] = -1.0/6.0;
+	Zf = 60.0;
 
-	cout << pTv << endl;
+	pTv[2][2] = 0;
+	pTv[3][2] = -1.0/Zf;
+
+	//cout << pTv << endl;
 
 
 	vTm[0][0] = 2/sqrt(5);
@@ -44,9 +47,11 @@ viewcontext::viewcontext():dTp(4,4), pTv(4,4), vTm(4,4), homo(4,4){
 	vTm[2][0] = 1.0/3.0;
 	vTm[2][1] = 2.0/3.0;
 	vTm[2][2] = 2.0/3.0;
-	vTm[2][3] = -6.0;
+	vTm[2][3] = -60.0;
 
-	cout << vTm << endl;
+	//cout << vTm << endl;
+	beta = 26.565 * M_PI/180.0;
+	theta = 0.0;
 
 }
 
@@ -101,7 +106,7 @@ void viewcontext::changeY(char sign){
  * increment or decrement angle of rotation based on input
  * @param sign : decrement if -, increment if +
  */
-void viewcontext::changeDeg(char sign){
+void viewcontext::changeDegY(char sign){
 	matrix dummy = matrix::identity(4);
 	float deg = 0.0;
 	if(sign == '-'){
@@ -110,14 +115,69 @@ void viewcontext::changeDeg(char sign){
 	else{
 		deg = 10.0 * M_PI/180.0;
 	}
+	theta += deg;
 	//assign rotations values to homogenous matrix
 	dummy[0][0] =  cos(deg);
-	dummy[0][1] = -sin(deg);
-	dummy[1][0] =  sin(deg);
-	dummy[1][1] =  cos(deg);
+	dummy[0][2] =  sin(deg);
+	dummy[2][0] = -sin(deg);
+	dummy[2][2] =  cos(deg);
+	//cout << dummy << endl;
 
 	//do forward  and invers operations on homogenous and inverse matrices
-	homo = dummy * homo;
+	threeDHomo = dummy * threeDHomo;
+}
+
+void viewcontext::changeDegHor(char sign){
+	matrix dummy1 = matrix::identity(4);
+	matrix dummy2 = matrix::identity(4);
+	matrix dummy3 = matrix::identity(4);
+
+	float deg = 0.0;
+	if(sign == '-'){
+		deg = -10.0 * M_PI/180.0;
+	}
+	else{
+		deg = 10.0 * M_PI/180.0;
+	} 
+
+	//assign horizontal transform matrix 1
+	dummy1[0][0] =  cos(beta + theta);
+	dummy1[0][2] = -sin(beta + theta);
+	dummy1[2][0] =  sin(beta + theta);
+	dummy1[2][2] =  cos(beta + theta);
+
+	//assign horizontal transform matrix 2
+	dummy2[1][1] =  cos(deg);
+	dummy2[1][2] = -sin(deg);
+	dummy2[2][1] =  sin(deg);
+	dummy2[2][2] =  cos(deg);
+
+	//assign horizontal transform matrix 3
+	dummy3[0][0] =  cos(beta + theta);
+	dummy3[0][2] =  sin(beta + theta);
+	dummy3[2][0] = -sin(beta + theta);
+	dummy3[2][2] =  cos(beta + theta);
+
+	threeDHomo = dummy3 * dummy2 * dummy1 * threeDHomo;
+}
+
+void viewcontext::changeFocus(char sign){
+	float foc = 0.0;
+	if(sign == '-'){
+		foc = -10.0;
+	}
+	else{
+		foc = 10.0;
+	}
+
+	if((Zf + foc) <= 20){
+		Zf = 20;
+	}
+	else{
+		Zf += foc;
+	}
+	
+	pTv[3][2] = -1.0/Zf;
 }
 
 /**
@@ -150,7 +210,21 @@ void viewcontext::scale(char sign){
  */
 matrix viewcontext::convert(const matrix oldMat){
 
-	return dTp*pTv*vTm*homo*oldMat;
+	matrix m1 = dTp*homo*pTv*vTm*threeDHomo*oldMat;
+
+	m1[0][0] = m1[0][0]/m1[3][0];
+	m1[1][0] = m1[1][0]/m1[3][0];
+	m1[3][0] = 1;
+
+	m1[0][1] = m1[0][1]/m1[3][1];
+	m1[1][1] = m1[1][1]/m1[3][1];
+	m1[3][1] = 1;
+
+	m1[0][2] = m1[0][2]/m1[3][2];
+	m1[1][2] = m1[1][2]/m1[3][2];
+	m1[3][2] = 1;
+
+	return m1;
 
 }
 
@@ -158,5 +232,7 @@ matrix viewcontext::convert(const matrix oldMat){
  * revert displayed image to non-transformed state
  */
 void viewcontext::undo(){
-	homo = matrix::identity(4);
+	homo	   = matrix::identity(4);
+	threeDHomo = matrix::identity(4);
+	beta = 0.0;
 }
