@@ -22,7 +22,7 @@ drawing::drawing()
 	tState = 'x';
 
 	parseFile("word.stl", picture);
-	
+
 	return;
 }
 
@@ -79,6 +79,11 @@ void drawing::keyDown(GraphicsContext* gc, unsigned int keycode){
 		tState = 's';
 	}
 
+	//f is focus change
+	else if(keycode == 102){
+		tState = 'f';
+	}
+
 	if(tState != 'x'){
 		if(tState == 't'){
 			//> pressed
@@ -106,7 +111,7 @@ void drawing::keyDown(GraphicsContext* gc, unsigned int keycode){
 				picture.draw(gc, vc);
 			}
 		}
-		//horizontal orbig state
+		//horizontal orbit state
 		else if(tState == 'y'){
 			//< pressed
 			if(keycode == 44){
@@ -121,7 +126,7 @@ void drawing::keyDown(GraphicsContext* gc, unsigned int keycode){
 				picture.draw(gc, vc);
 			}
 		}
-		//rotation z state
+		//vertical orbit state
 		else if(tState == 'z'){
 			//< pressed
 			if(keycode == 44){
@@ -136,6 +141,23 @@ void drawing::keyDown(GraphicsContext* gc, unsigned int keycode){
 				picture.draw(gc, vc);
 			}
 		}
+
+		//focus change state
+		else if(tState == 'f'){
+			//< pressed
+			if(keycode == 44){
+				vc->changeFocus('+');
+				gc->clear();
+				picture.draw(gc, vc);
+			}
+			//> pressed
+			else if(keycode == 46){
+				vc->changeFocus('-');
+				gc->clear();
+				picture.draw(gc, vc);
+			}
+		}
+
 		//scaling state
 		else if(tState == 's'){
 			//k pressed

@@ -176,7 +176,7 @@ void viewcontext::changeFocus(char sign){
 	else{
 		Zf += foc;
 	}
-	
+
 	pTv[3][2] = -1.0/Zf;
 }
 
@@ -235,4 +235,6 @@ void viewcontext::undo(){
 	homo	   = matrix::identity(4);
 	threeDHomo = matrix::identity(4);
 	beta = 0.0;
+	Zf = 60.0;
+	pTv[3][2] = -1.0/Zf;
 }
