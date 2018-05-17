@@ -38,7 +38,7 @@ triangle::triangle(const triangle& from):shape(from){
 	coor[1][1] = this->y2 = from.x2;
 	coor[2][1] = this->z2 = from.z2;
 	coor[0][2] = this->x3 = from.x3;
-	coor[1][2] = this->y3 = from.x3;
+	coor[1][2] = this->y3 = from.y3;
 	coor[2][3] = this->z3 = from.z3;
 }
 

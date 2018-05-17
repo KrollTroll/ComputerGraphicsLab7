@@ -41,6 +41,12 @@ virtual void paint(GraphicsContext* gc);
  */
 virtual void keyDown(GraphicsContext* gc, unsigned int keycode);
 
+virtual void mouseButtonDown(GraphicsContext* gc, unsigned int button, int x, int y);
+
+virtual void mouseButtonUp(GraphicsContext* gc, unsigned int button, int x, int y);
+
+virtual void mouseMove(GraphicsContext* gc, int x, int y);
+
 /**
  * this is a helper method to decode the current context color to R, G, and B values
  * @param color

@@ -40,9 +40,9 @@ void changeY(char sign);
  * increment or decrement angle of rotation based on input
  * @param sign : decrement if -, increment if +
  */
-void changeDegY(char sign);
-
 void changeDegHor(char sign);
+
+void changeDegVert(char sign);
 
 void changeFocus(char sign);
 

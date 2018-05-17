@@ -115,13 +115,13 @@ void drawing::keyDown(GraphicsContext* gc, unsigned int keycode){
 		else if(tState == 'y'){
 			//< pressed
 			if(keycode == 44){
-				vc->changeDegY('+');
+				vc->changeDegHor('+');
 				gc->clear();
 				picture.draw(gc, vc);
 			}
 			//> pressed
 			else if(keycode == 46){
-				vc->changeDegY('-');
+				vc->changeDegHor('-');
 				gc->clear();
 				picture.draw(gc, vc);
 			}
@@ -130,13 +130,13 @@ void drawing::keyDown(GraphicsContext* gc, unsigned int keycode){
 		else if(tState == 'z'){
 			//< pressed
 			if(keycode == 44){
-				vc->changeDegHor('+');
+				vc->changeDegVert('+');
 				gc->clear();
 				picture.draw(gc, vc);
 			}
 			//> pressed
 			else if(keycode == 46){
-				vc->changeDegHor('-');
+				vc->changeDegVert('-');
 				gc->clear();
 				picture.draw(gc, vc);
 			}
@@ -176,6 +176,58 @@ void drawing::keyDown(GraphicsContext* gc, unsigned int keycode){
 	}
 
 }
+
+void drawing::mouseButtonDown(GraphicsContext* gc, unsigned int button, int x, int y){
+	x0 = x1 = x;
+	y0 = y1 = y;
+	dragging = true;
+}
+
+void drawing::mouseButtonUp(GraphicsContext* gc, unsigned int button, int x, int y){
+	dragging = false;
+}
+
+
+void drawing::mouseMove(GraphicsContext* gc, int x, int y){
+	if(dragging){
+		x1 = x;
+		y1 = y;
+
+		int diffX = x1 - x0;
+		int diffY = y1 - y0;
+
+		if(diffX >= 20){
+			x0 = x1;
+			y0 = y1;
+			vc->changeDegHor('+');
+			gc->clear();
+			picture.draw(gc, vc);
+		}
+		else if(diffX <= -20){
+			x0 = x1;
+			y0 = y1;
+			vc->changeDegHor('-');
+			gc->clear();
+			picture.draw(gc, vc);
+		}
+
+		if(diffY >= 20){
+			x0 = x1;
+			y0 = y1;
+			vc->changeDegVert('+');
+			gc->clear();
+			picture.draw(gc, vc);
+		}
+		else if(diffY <= -20){
+			x0 = x1;
+			y0 = y1;
+			vc->changeDegVert('-');
+			gc->clear();
+			picture.draw(gc, vc);
+		}
+	}
+}
+
 
 /**
  * This function parses through an input file and calls printAndCheck
@@ -272,6 +324,9 @@ void drawing::parseFile(string inFile, image& picture){
 	}
 }
 
+/**
+ * Helper method to draw L, N, and M axes as needed 
+ */
 void drawing::drawAxes(){
 	triangle t1(255, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0);
 	triangle t2(0, 255, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0);

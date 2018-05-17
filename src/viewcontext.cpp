@@ -103,10 +103,10 @@ void viewcontext::changeY(char sign){
 }
 
 /**
- * increment or decrement angle of rotation based on input
+ * increment or decrement angle of horizontal rotation based on input
  * @param sign : decrement if -, increment if +
  */
-void viewcontext::changeDegY(char sign){
+void viewcontext::changeDegHor(char sign){
 	matrix dummy = matrix::identity(4);
 	float deg = 0.0;
 	if(sign == '-'){
@@ -127,7 +127,11 @@ void viewcontext::changeDegY(char sign){
 	threeDHomo = dummy * threeDHomo;
 }
 
-void viewcontext::changeDegHor(char sign){
+/**
+ * increment or decrement angle of vertical rotation based on input
+ * @param sign : decrement if -, increment if +
+ */
+void viewcontext::changeDegVert(char sign){
 	matrix dummy1 = matrix::identity(4);
 	matrix dummy2 = matrix::identity(4);
 	matrix dummy3 = matrix::identity(4);
@@ -161,6 +165,10 @@ void viewcontext::changeDegHor(char sign){
 	threeDHomo = dummy3 * dummy2 * dummy1 * threeDHomo;
 }
 
+/**
+ * increment or decrement level of focus
+ * @param sign : decrement if -, increment if +
+ */
 void viewcontext::changeFocus(char sign){
 	float foc = 0.0;
 	if(sign == '-'){
@@ -170,6 +178,7 @@ void viewcontext::changeFocus(char sign){
 		foc = 10.0;
 	}
 
+	//minumum focus value is 20
 	if((Zf + foc) <= 20){
 		Zf = 20;
 	}
@@ -195,7 +204,7 @@ void viewcontext::scale(char sign){
 	else{
 		scaleFact = 2;
 	}
-	for(int i = 0; i < 3; i++){
+	for(int i = 0; i < 2; i++){
 		//asign forward scale factor
 		dummy[i][i] = scaleFact;
 	}
